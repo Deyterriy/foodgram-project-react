@@ -22,7 +22,7 @@ class Base64ImageField(serializers.ImageField):
             format, imgstr = data.split(';base64,')
             ext = format.split('/')[-1]
             data = ContentFile(base64.b64decode(imgstr), name='photo.' + ext)
-        
+
         return super().to_internal_value(data)
 
 
