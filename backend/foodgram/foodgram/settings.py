@@ -1,18 +1,14 @@
 import os
-
 from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = 'django-insecure-9_4$at)l^o&y5d)m5hc$+(h_%pjeet+17==hx^_f($#gm(_6k&'
+SECRET_KEY = 'django-insecure-$7e&4rk+$rrqc@lyl0@=zjwll!nrd^v4(z+e4#h*f5fhv(*!#e'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1:8000']
 
 
 INSTALLED_APPS = [
@@ -23,13 +19,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
+    'corsheaders',
     'rest_framework.authtoken',
     'djoser',
+    'users.apps.UsersConfig',
     'api.apps.ApiConfig',
     'recipes.apps.RecipesConfig',
-    'users.apps.UsersConfig',
-    'drf_yasg',
-    'django_filters',
+
 ]
 
 MIDDLEWARE = [
@@ -63,25 +60,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-#         'NAME': os.getenv('DB_NAME', default='postgres'),
-#         'USER': os.getenv('POSTGRES_USER', default='postgres'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
-#         'HOST': os.getenv('DB_HOST', default='db'),
-#         'PORT': os.getenv('DB_PORT', default='5432')
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-AUTH_USER_MODEL = 'users.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -98,8 +83,29 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    'DEFAULT_PAGINATION_CLASS': [
+        'api.pagination.CustomPaginator',
+    ],
+    'PAGE_SIZE': 6,
+    'SEARCH_PARAM': 'name',
+}
 
-LANGUAGE_CODE = 'ru-RU'
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+}
+
+
+LANGUAGE_CODE = 'ru-Ru'
 
 TIME_ZONE = 'UTC'
 
@@ -110,40 +116,17 @@ USE_L10N = True
 USE_TZ = True
 
 
+AUTH_USER_MODEL = 'users.User'
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-
-    'PAGE_SIZE': 6,
-}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'HIDE_USERS': False,
-    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': False,
-    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-    'SERIALIZERS': {
-        'user': 'api.serializer.CustomUserSerializer',
-        'user_create': 'api.serializer.CustomCreateUserSerializer',
-        'current_user': 'api.serializer.CustomUserSerializer',
-    },
-    'PERMISSIONS': {
-        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-        'user_list': ['rest_framework.permissions.AllowAny']
-    },
-}
 
-CSV_FILES_DIR = os.path.join(BASE_DIR, 'data')
+FILE_NAME = 'shopping_cart.txt'
+

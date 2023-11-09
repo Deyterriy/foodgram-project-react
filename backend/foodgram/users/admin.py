@@ -1,12 +1,21 @@
-from django.contrib.admin import register
-from django.contrib.auth.admin import UserAdmin
+from django.contrib import admin
 
-from .models import User
+from . import models
 
 
-@register(User)
-class MyUserAdmin(UserAdmin):
-    list_display = ('pk', 'username', 'email', 'first_name', 'last_name',
-                    'password')
+@admin.register(models.User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = (
+        'username', 'pk', 'email', 'password', 'first_name', 'last_name',
+    )
+    list_editable = ('password', )
     list_filter = ('username', 'email')
     search_fields = ('username', 'email')
+    empty_value_display = '-пустота-'
+
+
+@admin.register(models.Subscribe)
+class SubscribeAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'user', 'author')
+    list_editable = ('user', 'author')
+    empty_value_display = '-пустота-'
