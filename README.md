@@ -100,11 +100,6 @@ POSTGRES_PASSWORD=foodgram_password
 DB_NAME=foodgram
 DB_HOST=db
 DB_PORT=5432
-
-# Docker images
-BACKEND_IMAGE=<username>/foodgram_back
-FRONTEND_IMAGE=<username>/foodgram_front
-GATEWAY_IMAGE=<username>/foodgram_gate
 ```
 
 Создать docker images образы:
