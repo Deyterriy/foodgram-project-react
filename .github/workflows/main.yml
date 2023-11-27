@@ -98,6 +98,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Copy docker-compose.yml via ssh
+        with:
+          context: ./infra/
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
