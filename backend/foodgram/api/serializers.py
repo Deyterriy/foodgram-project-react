@@ -259,7 +259,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 'Рецепт должен содержать Теги'
             )
         return obj
-    
+
     def validate_ingredients(self, ingredients):
         ingredients_list = []
         for item in ingredients:
@@ -275,7 +275,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 )
             ingredients_list.append(ingredient)
         return ingredients
-    
+
     def validate_tags(self, tags):
         if len(set(tags)) != len(tags):
             raise serializers.ValidationError(
