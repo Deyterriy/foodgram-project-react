@@ -19,12 +19,10 @@ class UserAdmin(admin.ModelAdmin):
     @admin.display(description='Количество подписчиков')
     def subscriber_count(self, obj):
         return obj.subscriber.count()
-    
+
     @admin.display(description='Количество рецептов')
     def recipes_count(self, obj):
         return obj.recipes.count()
-    
-
 
 
 @admin.register(models.Subscribe)
