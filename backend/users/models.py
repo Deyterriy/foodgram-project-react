@@ -1,12 +1,25 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .constants import LENGTH
+
 
 class User(AbstractUser):
     email = models.EmailField(max_length=254, unique=True)
+    username = models.CharField(
+        verbose_name="username", max_length=LENGTH.l_150, unique=True
+    )
+    first_name = models.CharField(
+        verbose_name="Имя",
+        max_length=LENGTH.l_150,
+    )
+    last_name = models.CharField(
+        verbose_name="Фамилия",
+        max_length=LENGTH.l_150,
+    )
 
     class Meta:
-        ordering = ['id']
+        ordering = ['username']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
@@ -28,9 +41,6 @@ class Subscribe(models.Model):
         verbose_name='Подписан'
     )
 
-    def __str__(self):
-        return f'{self.user.username} - {self.author.username}'
-
     class Meta:
         verbose_name = 'Подписка на авторов'
         verbose_name_plural = 'Подписки на авторов'
@@ -40,3 +50,6 @@ class Subscribe(models.Model):
                 name='unique_subscribe'
             )
         ]
+    
+    def __str__(self):
+        return f'{self.user.username} - {self.author.username}'

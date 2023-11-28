@@ -141,7 +141,7 @@ cd /home/<username>/foodgram
 sudo docker compose up -d
 ```
 
-Выполнить заполнение базы ингредиентами:
+Выполнить заполнение базы тестовыми данными(ингредиентами):
 ```shell
 docker compose exec backend python manage.py load_ingredients_data
 ```
@@ -161,6 +161,14 @@ Actions secrets:
 - `secrets.TELEGRAM_TO`
 - `secrets.TELEGRAM_TOKEN`
 
+
+## Проект доступен по адресу:
+- https://foodgramdeyt.ddns.net
+
 Данные для доступа:
 - login - admin@admin.com
 - pass - admin
+
+### Автор:  
+_Козлов Кирилл_<br>
+**email**: _d3yterriy@yandex.ru_<br>
