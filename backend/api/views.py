@@ -78,7 +78,7 @@ class UserViewSet(mixins.CreateModelMixin,
     def delete_subscribe(self, request, **kwargs):
         author = get_object_or_404(User, id=kwargs['pk'])
         get_object_or_404(Subscribe, user=request.user,
-                              author=author).delete()
+                          author=author).delete()
         return Response({'detail': 'Успешная отписка'},
                         status=status.HTTP_204_NO_CONTENT)
 
@@ -122,11 +122,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                       context={'request': request})
         serializer.is_valid(raise_exception=True)
         if not Models.objects.filter(user=request.user,
-                                            recipe=recipe).exists():
+                                     recipe=recipe).exists():
             Models.objects.create(user=request.user, recipe=recipe)
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED)
-    
+
     @staticmethod
     def delete_recipe(request, Models, pk, **kwargs):
         recipe = get_object_or_404(Recipe, id=kwargs['pk'])
@@ -145,7 +145,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @favorite.mapping.delete
     def favorite_delete(self, request, **kwargs):
-        self.delete_recipe(request, Favorite **kwargs)
+        self.delete_recipe(request, Favorite, **kwargs)
         return Response({'detail': 'Рецепт успешно удален из избранного.'},
                         status=status.HTTP_204_NO_CONTENT)
 
@@ -159,14 +159,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             self.create_recipe(recipe, request, ShoppingCart)
             return Response({'errors': 'Рецепт уже в списке покупок.'},
                             status=status.HTTP_400_BAD_REQUEST)
-    
+
     @shopping_cart.mapping.delete
     def shopping_cart_delete(self, request, **kwargs):
         self.delete_recipe(request, ShoppingCart, **kwargs)
         return Response(
             {'detail': 'Рецепт успешно удален из списка покупок.'},
             status=status.HTTP_204_NO_CONTENT
-            )
+        )
 
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))
