@@ -2,15 +2,17 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from users.models import User
 
+from users.constants import LENGTH, MIN_VALUE_MSG, MIN_VALUE
+
 
 class Ingredient(models.Model):
     name = models.CharField(
         'Название ингредиента',
-        max_length=200
+        max_length=LENGTH.l_200,
     )
     measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=200
+        max_length=LENGTH.l_200,
     )
 
     class Meta:
@@ -25,11 +27,11 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     name = models.CharField(
         'Название тега',
-        max_length=200
+        max_length=LENGTH.l_200,
     )
     color = models.CharField(
         'Цвет в HEX',
-        max_length=7,
+        max_length=LENGTH.l_7,
         null=True,
         validators=[
             RegexValidator(
@@ -41,7 +43,7 @@ class Tag(models.Model):
     )
     slug = models.SlugField(
         'Уникальный слаг',
-        max_length=200,
+        max_length=LENGTH.l_200,
         unique=True,
         null=True
     )
@@ -57,14 +59,14 @@ class Tag(models.Model):
 class Recipe(models.Model):
     name = models.CharField(
         'Название рецепта',
-        max_length=200
+        max_length=LENGTH.l_200,
     )
     text = models.TextField(
         'Описание рецепта'
     )
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления, мин',
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(MIN_VALUE, MIN_VALUE_MSG)]
     )
     image = models.ImageField(
         'Картинка',
@@ -102,7 +104,7 @@ class Recipe(models.Model):
         return self.name
 
 
-class Recipe_ingredient(models.Model):
+class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -117,7 +119,7 @@ class Recipe_ingredient(models.Model):
     )
     amount = models.IntegerField(
         'Количество',
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(MIN_VALUE, MIN_VALUE_MSG)]
     )
 
     class Meta:
@@ -165,7 +167,7 @@ class Favorite(models.Model):
         return f'{self.user.username} - {self.recipe.name}'
 
 
-class Shopping_cart(models.Model):
+class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

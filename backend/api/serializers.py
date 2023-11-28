@@ -2,7 +2,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions as django_exceptions
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
-from recipes.models import (Favorite, Ingredient, Recipe, Recipe_ingredient,
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             Shopping_cart, Tag)
 from rest_framework import serializers
 from users.models import Subscribe, User
@@ -115,11 +115,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         return obj.recipes.count()
 
     def get_recipes(self, obj):
-        request = self.context.get('request')
-        limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()
-        if limit:
-            recipes = recipes[:int(limit)]
         serializer = RecipeSerializer(recipes, many=True, read_only=True)
         return serializer.data
 
@@ -141,7 +137,9 @@ class SubscribeAuthorSerializer(serializers.ModelSerializer):
 
     def validate(self, obj):
         if (self.context['request'].user == obj):
-            raise serializers.ValidationError({'errors': 'Ошибка подписки.'})
+            raise serializers.ValidationError({
+                'errors': 'Ошибка подписки. Нельзя подписаться на самого себя!'
+            })
         return obj
 
     def get_is_subscribed(self, obj):
@@ -177,7 +175,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         source='ingredient.measurement_unit')
 
     class Meta:
-        model = Recipe_ingredient
+        model = RecipeIngredient
         fields = ('id', 'name',
                   'measurement_unit', 'amount')
 
@@ -221,7 +219,7 @@ class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
 
     class Meta:
-        model = Recipe_ingredient
+        model = RecipeIngredient
         fields = ('id', 'amount')
 
 
@@ -286,8 +284,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def tags_and_ingredients_set(self, recipe, tags, ingredients):
         recipe.tags.set(tags)
-        Recipe_ingredient.objects.bulk_create(
-            [Recipe_ingredient(
+        RecipeIngredient.objects.bulk_create(
+            [RecipeIngredient(
                 recipe=recipe,
                 ingredient=Ingredient.objects.get(pk=ingredient['id']),
                 amount=ingredient['amount']
@@ -312,7 +310,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'cooking_time', instance.cooking_time)
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        Recipe_ingredient.objects.filter(
+        RecipeIngredient.objects.filter(
             recipe=instance,
             ingredient__in=instance.ingredients.all()).delete()
         self.tags_and_ingredients_set(instance, tags, ingredients)
