@@ -7,6 +7,7 @@ from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscribe, User
@@ -64,9 +65,13 @@ class UserViewSet(mixins.CreateModelMixin,
     @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, **kwargs):
-        author = get_object_or_404(User, id=kwargs['pk'])
-
         if request.method == 'POST':
+            try:
+                author = get_object_or_404(User, id=kwargs['pk'])
+            except Recipe.DoesNotExist:
+                raise ValidationError(
+                    'Пользователь с указанным идентификатором не существует.'
+                )
             serializer = SubscribeAuthorSerializer(
                 author, data=request.data, context={'request': request})
             serializer.is_valid(raise_exception=True)
@@ -136,9 +141,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'],
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
-        recipe = get_object_or_404(Recipe, id=kwargs['pk'])
-
         if request.method == 'POST':
+            try:
+                recipe = get_object_or_404(Recipe, id=kwargs['pk'])
+            except Recipe.DoesNotExist:
+                raise ValidationError(
+                    'Рецепт с указанным идентификатором не существует.'
+                )
             self.create_recipe(recipe, request, Favorite)
             return Response({'errors': 'Рецепт уже в избранном.'},
                             status=status.HTTP_400_BAD_REQUEST)
