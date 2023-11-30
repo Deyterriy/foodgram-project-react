@@ -138,7 +138,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, **kwargs):
         if request.method == 'POST':
             try:
-                recipe = recipe = Recipe.objects.get(id=kwargs['pk'])
+                recipe = Recipe.objects.get(id=kwargs['pk'])
             except Recipe.DoesNotExist:
                 raise ValidationError(
                     'Рецепт с указанным идентификатором не существует.'
