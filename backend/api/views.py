@@ -68,7 +68,7 @@ class UserViewSet(mixins.CreateModelMixin,
         if request.method == 'POST':
             try:
                 author = get_object_or_404(User, id=kwargs['pk'])
-            except Recipe.DoesNotExist:
+            except User.DoesNotExist:
                 raise ValidationError(
                     'Пользователь с указанным идентификатором не существует.'
                 )
