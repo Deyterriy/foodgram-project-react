@@ -66,12 +66,7 @@ class UserViewSet(mixins.CreateModelMixin,
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, **kwargs):
         if request.method == 'POST':
-            try:
-                author = get_object_or_404(User, id=kwargs['pk'])
-            except User.DoesNotExist:
-                raise ValidationError(
-                    'Пользователь с указанным идентификатором не существует.'
-                )
+            author = get_object_or_404(User, id=kwargs['pk'])
             serializer = SubscribeAuthorSerializer(
                 author, data=request.data, context={'request': request})
             serializer.is_valid(raise_exception=True)
@@ -165,12 +160,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, id=kwargs['pk'])
 
         if request.method == 'POST':
-            try:
-                recipe = get_object_or_404(Recipe, id=kwargs['pk'])
-            except Recipe.DoesNotExist:
-                raise ValidationError(
-                    'Рецепт с указанным идентификатором не существует.'
-                )
+            recipe = get_object_or_404(Recipe, id=kwargs['pk'])
             self.create_recipe(recipe, request, ShoppingCart)
             return Response({'errors': 'Рецепт уже в списке покупок.'},
                             status=status.HTTP_400_BAD_REQUEST)
