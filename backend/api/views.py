@@ -137,12 +137,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
         if request.method == 'POST':
-            try:
-                recipe = Recipe.objects.get(id=kwargs['pk'])
-            except Recipe.DoesNotExist:
-                raise ValidationError(
-                    'Рецепт с указанным идентификатором не существует.'
-                )
+            recipe = get_object_or_404(Recipe, id=kwargs['pk'])
             self.create_recipe(recipe, request, Favorite)
             return Response({'errors': 'Рецепт уже в избранном.'},
                             status=status.HTTP_400_BAD_REQUEST)
