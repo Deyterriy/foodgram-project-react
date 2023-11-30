@@ -165,6 +165,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, id=kwargs['pk'])
 
         if request.method == 'POST':
+            try:
+                recipe = get_object_or_404(Recipe, id=kwargs['pk'])
+            except Recipe.DoesNotExist:
+                raise ValidationError(
+                    'Рецепт с указанным идентификатором не существует.'
+                )
             self.create_recipe(recipe, request, ShoppingCart)
             return Response({'errors': 'Рецепт уже в списке покупок.'},
                             status=status.HTTP_400_BAD_REQUEST)
