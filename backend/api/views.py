@@ -7,7 +7,7 @@ from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
-# from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscribe, User
@@ -138,6 +138,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, **kwargs):
         if request.method == 'POST':
             recipe = get_object_or_404(Recipe, id=kwargs['pk'])
+            try:
+                recipe = Recipe.objects.get(id=kwargs['pk'])
+            except Recipe.DoesNotExist:
+                raise ValidationError(
+                    'Рецепт с указанным идентификатором не существует.'
+                )
             self.create_recipe(recipe, request, Favorite)
             return Response({'errors': 'Рецепт уже в избранном.'},
                             status=status.HTTP_400_BAD_REQUEST)
