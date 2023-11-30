@@ -132,9 +132,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         try:
             recipe = Recipe.objects.get(id=kwargs['pk'])
         except Recipe.DoesNotExist:
-                raise ValidationError(
-                    'Рецепт с указанным идентификатором не существует.'
-                )
+            raise ValidationError(
+                'Рецепт с указанным идентификатором не существует.'
+            )
         get_object_or_404(Models, user=request.user,
                           recipe=recipe).delete()
 
