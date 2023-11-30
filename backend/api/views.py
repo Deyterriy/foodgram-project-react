@@ -137,7 +137,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
         if request.method == 'POST':
-            recipe = get_object_or_404(Recipe, id=kwargs['pk'])
             try:
                 recipe = Recipe.objects.get(id=kwargs['pk'])
             except Recipe.DoesNotExist:
